@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="nabdBackground" format="color" />
+    <attr name="nabdText" format="color" />
+    <attr name="nabdMuted" format="color" />
+    <attr name="nabdLine" format="color" />
+    <attr name="nabdFilterIdle" format="color" />
+    <attr name="nabdFilterSelected" format="color" />
+    <attr name="nabdFilterSelectedText" format="color" />
+</resources>

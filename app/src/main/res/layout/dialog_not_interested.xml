@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?attr/nabdBackground"
+    android:layoutDirection="rtl"
+    android:orientation="vertical"
+    android:padding="20dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/why_not_interested"
+        android:textColor="?attr/nabdText"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/storyTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:ellipsize="end"
+        android:maxLines="2"
+        android:textColor="?attr/nabdMuted"
+        android:textSize="14sp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/why_hint"
+        android:textColor="?attr/nabdMuted"
+        android:textSize="13sp" />
+
+    <LinearLayout
+        android:id="@+id/topicReasons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:orientation="vertical"
+        android:visibility="gone" />
+
+    <Button
+        android:id="@+id/reasonSource"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:background="?attr/nabdFilterIdle"
+        android:backgroundTint="@null"
+        android:textAllCaps="false"
+        android:textColor="?attr/nabdText" />
+
+    <Button
+        android:id="@+id/reasonStory"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:background="?attr/nabdFilterIdle"
+        android:backgroundTint="@null"
+        android:text="@string/reason_story"
+        android:textAllCaps="false"
+        android:textColor="?attr/nabdText" />
+
+    <Button
+        android:id="@+id/reasonCancel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:background="@android:color/transparent"
+        android:text="@string/cancel"
+        android:textAllCaps="false"
+        android:textColor="?attr/nabdMuted" />
+
+</LinearLayout>

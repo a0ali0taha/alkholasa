@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.Nabd.Paper" parent="android:Theme.Material.NoActionBar">
+        <item name="android:statusBarColor">@color/paper_background</item>
+        <item name="android:navigationBarColor">@color/paper_background</item>
+        <item name="android:windowBackground">@color/paper_background</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowLightNavigationBar">true</item>
+        <item name="android:enforceStatusBarContrast">false</item>
+        <item name="android:enforceNavigationBarContrast">false</item>
+        <item name="android:colorAccent">@color/paper_text</item>
+        <item name="nabdBackground">@color/paper_background</item>
+        <item name="nabdText">@color/paper_text</item>
+        <item name="nabdMuted">@color/paper_muted</item>
+        <item name="nabdLine">@color/paper_line</item>
+        <item name="nabdFilterIdle">@color/paper_filter_idle</item>
+        <item name="nabdFilterSelected">@color/paper_filter_selected</item>
+        <item name="nabdFilterSelectedText">@color/paper_filter_selected_text</item>
+    </style>
+
+    <style name="Theme.Nabd.Charcoal" parent="android:Theme.Material.NoActionBar">
+        <item name="android:statusBarColor">@color/charcoal_background</item>
+        <item name="android:navigationBarColor">@color/charcoal_background</item>
+        <item name="android:windowBackground">@color/charcoal_background</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowLightNavigationBar">false</item>
+        <item name="android:enforceStatusBarContrast">false</item>
+        <item name="android:enforceNavigationBarContrast">false</item>
+        <item name="android:colorAccent">@color/charcoal_text</item>
+        <item name="nabdBackground">@color/charcoal_background</item>
+        <item name="nabdText">@color/charcoal_text</item>
+        <item name="nabdMuted">@color/charcoal_muted</item>
+        <item name="nabdLine">@color/charcoal_line</item>
+        <item name="nabdFilterIdle">@color/charcoal_filter_idle</item>
+        <item name="nabdFilterSelected">@color/charcoal_filter_selected</item>
+        <item name="nabdFilterSelectedText">@color/charcoal_filter_selected_text</item>
+    </style>
+</resources>
