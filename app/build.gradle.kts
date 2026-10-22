@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "com.taha.nabd"
+    namespace = "com.taha.alkholasa"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.taha.nabd"
+        applicationId = "com.taha.alkholasa"
         minSdk = 29
         targetSdk = 35
         versionCode = 1

@@ -1,4 +1,4 @@
-package com.taha.nabd
+package com.taha.alkholasa
 
 data class ReadingText(
     val titleSp: Float,

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme.Nabd.Paper" parent="android:Theme.Material.NoActionBar">
+    <style name="Theme.Alkholasa.Paper" parent="android:Theme.Material.NoActionBar">
         <item name="android:statusBarColor">@color/paper_background</item>
         <item name="android:navigationBarColor">@color/paper_background</item>
         <item name="android:windowBackground">@color/paper_background</item>
@@ -18,7 +18,7 @@
         <item name="nabdFilterSelectedText">@color/paper_filter_selected_text</item>
     </style>
 
-    <style name="Theme.Nabd.Charcoal" parent="android:Theme.Material.NoActionBar">
+    <style name="Theme.Alkholasa.Charcoal" parent="android:Theme.Material.NoActionBar">
         <item name="android:statusBarColor">@color/charcoal_background</item>
         <item name="android:navigationBarColor">@color/charcoal_background</item>
         <item name="android:windowBackground">@color/charcoal_background</item>

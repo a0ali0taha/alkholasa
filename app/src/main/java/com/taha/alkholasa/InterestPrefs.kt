@@ -1,4 +1,4 @@
-package com.taha.nabd
+package com.taha.alkholasa
 
 import android.content.Context
 
@@ -14,7 +14,7 @@ class InterestPrefs(context: Context) {
     }
 
     fun themeStyle(): Int =
-        if (themeId() == THEME_CHARCOAL) R.style.Theme_Nabd_Charcoal else R.style.Theme_Nabd_Paper
+        if (themeId() == THEME_CHARCOAL) R.style.Theme_Alkholasa_Charcoal else R.style.Theme_Alkholasa_Paper
 
     fun textSizeId(): String = prefs.getString(KEY_TEXT, ReadingText.COMFORTABLE) ?: ReadingText.COMFORTABLE
 

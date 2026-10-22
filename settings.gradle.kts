@@ -14,5 +14,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "nabd"
+rootProject.name = "alkholasa"
 include(":app")

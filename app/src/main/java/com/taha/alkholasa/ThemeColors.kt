@@ -1,4 +1,4 @@
-package com.taha.nabd
+package com.taha.alkholasa
 
 import android.content.Context
 import androidx.annotation.AttrRes
