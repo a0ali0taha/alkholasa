@@ -55,6 +55,7 @@ class MainActivity : Activity() {
         )
 
         adapter.onMoreClick = { anchor, article -> showArticleMenu(anchor, article) }
+        adapter.onOpenUrl = { openArticle(it) }
         list.adapter = adapter
         list.setOnItemClickListener { _, _, position, _ ->
             openArticle(adapter.getItem(position).url)
@@ -186,11 +187,14 @@ class MainActivity : Activity() {
 
     private fun show() {
         val cutoff = System.currentTimeMillis() - DAY_MILLIS
-        val visible = articles
-            .filter { it.publishedAt >= cutoff }
-            .filter { prefs.allows(it) }
-            .filter { region == "all" || it.region == region }
+        val visible = NewsFeed.combined(
+            articles
+                .filter { it.publishedAt >= cutoff }
+                .filter { prefs.allows(it) }
+                .filter { region == "all" || it.region == region },
+        )
         adapter.readingText = prefs.readingText()
+        adapter.mutedSources = prefs.mutedSources()
         adapter.submit(visible)
         when {
             !loaded && !lastLoadFailed -> {

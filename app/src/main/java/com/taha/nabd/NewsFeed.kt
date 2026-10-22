@@ -17,6 +17,12 @@ data class NewsLoad(
     val allFailed: Boolean,
 )
 
+data class Related(
+    val title: String,
+    val source: String,
+    val url: String,
+)
+
 data class Article(
     val title: String,
     val source: String,
@@ -25,11 +31,15 @@ data class Article(
     val region: String,
     val regionLabel: String,
     val topics: List<Topic> = emptyList(),
+    val related: List<Related> = emptyList(),
 )
 
 private data class Edition(val id: String, val label: String, val gl: String)
 
 private data class Feed(val edition: Edition, val topic: Topic?, val url: String)
+
+private val RELATED_PATTERN = setOf(RegexOption.IGNORE_CASE, RegexOption.DOT_MATCHES_ALL)
+private const val MAX_RELATED = 8
 
 object NewsFeed {
     private val topicCatalog = listOf(
@@ -99,7 +109,44 @@ object NewsFeed {
             .sortedByDescending { it.publishedAt }
     }
 
+    fun combined(articles: List<Article>): List<Article> {
+        val grouped = linkedMapOf<String, MutableList<Article>>()
+        for (article in articles) {
+            grouped.getOrPut(normalize(article.title)) { mutableListOf() }.add(article)
+        }
+        return grouped.values
+            .map { group -> if (group.size == 1) group.first() else foldEditions(group) }
+            .sortedByDescending { it.publishedAt }
+    }
+
+    private fun foldEditions(group: List<Article>): Article {
+        val ordered = group.sortedByDescending { it.publishedAt }
+        val newest = ordered.first()
+        val labels = editions.mapNotNull { edition ->
+            if (group.any { it.region == edition.id }) edition.label else null
+        }
+        val topics = topicCatalog.filter { topic -> group.any { topic in it.topics } }
+        val seen = mutableSetOf(normalize(newest.title))
+        val related = mutableListOf<Related>()
+        for (item in ordered.flatMap { it.related }) {
+            val key = normalize(item.title)
+            if (key.isEmpty() || key in seen || related.any { it.url == item.url }) continue
+            seen += key
+            related += item
+            if (related.size == MAX_RELATED) break
+        }
+        return newest.copy(
+            regionLabel = labels.joinToString(" · ").ifBlank { newest.regionLabel },
+            topics = topics,
+            related = related,
+        )
+    }
+
     private fun normalize(title: String) = title.trim().replace(Regex("\\s+"), " ")
+
+    private val relatedItem = Regex("""<li\b[^>]*>(.*?)</li>""", RELATED_PATTERN)
+    private val relatedLink = Regex("""<a\s+[^>]*href="([^"]+)"[^>]*>(.*?)</a>""", RELATED_PATTERN)
+    private val relatedSource = Regex("""<font\b[^>]*>(.*?)</font>""", RELATED_PATTERN)
 
     private fun fetch(feed: Feed): List<Article> {
         val connection = (URL(feed.url).openConnection() as HttpURLConnection).apply {
@@ -130,6 +177,7 @@ object NewsFeed {
         var title = ""
         var link = ""
         var source = ""
+        var description = ""
         var publishedAt = 0L
         var event = parser.eventType
         while (event != XmlPullParser.END_DOCUMENT) {
@@ -139,6 +187,7 @@ object NewsFeed {
                     title = ""
                     link = ""
                     source = ""
+                    description = ""
                     publishedAt = 0L
                 } else if (inItem) {
                     when (parser.name) {
@@ -146,10 +195,11 @@ object NewsFeed {
                         "link" -> link = parser.nextText().trim()
                         "source" -> source = parser.nextText().trim()
                         "pubDate" -> publishedAt = parseDate(parser.nextText().trim())
+                        "description" -> description = parser.nextText().trim()
                     }
                 }
                 XmlPullParser.END_TAG -> if (parser.name == "item" && inItem) {
-                    articles += toArticle(title, source, link, publishedAt, feed)
+                    articles += toArticle(title, source, link, publishedAt, description, feed)
                     inItem = false
                 }
             }
@@ -163,6 +213,7 @@ object NewsFeed {
         rawSource: String,
         link: String,
         publishedAt: Long,
+        description: String,
         feed: Feed,
     ): Article {
         val splitAt = rawTitle.lastIndexOf(" - ")
@@ -170,16 +221,42 @@ object NewsFeed {
         val source = rawSource.ifBlank {
             if (splitAt > 0) rawTitle.substring(splitAt + 3).trim() else ""
         }
+        val headline = title.ifBlank { rawTitle }
         return Article(
-            title = title.ifBlank { rawTitle },
+            title = headline,
             source = source,
             url = link,
             publishedAt = publishedAt,
             region = feed.edition.id,
             regionLabel = feed.edition.label,
             topics = listOfNotNull(feed.topic),
+            related = if (feed.topic == null) parseRelated(description, headline, link) else emptyList(),
         )
     }
+
+    private fun parseRelated(html: String, mainTitle: String, mainUrl: String): List<Related> {
+        if (html.isBlank()) return emptyList()
+        val main = normalize(mainTitle)
+        val found = mutableListOf<Related>()
+        for (block in relatedItem.findAll(html)) {
+            val body = block.groupValues[1]
+            val link = relatedLink.find(body) ?: continue
+            val url = cleanText(link.groupValues[1])
+            val title = cleanText(link.groupValues[2])
+            val source = relatedSource.find(body)?.let { cleanText(it.groupValues[1]) }.orEmpty()
+            if (url.isBlank() || title.isBlank()) continue
+            if (url == mainUrl || normalize(title) == main) continue
+            found += Related(title, source, url)
+        }
+        return found.distinctBy { it.url }.take(MAX_RELATED)
+    }
+
+    private fun cleanText(value: String) =
+        value.replace(Regex("<[^>]+>"), " ")
+            .replace('\u00a0', ' ')
+            .replace(Regex("[\\u200B-\\u200D\\uFEFF]"), "")
+            .replace(Regex("\\s+"), " ")
+            .trim()
 
     private fun parseDate(value: String): Long {
         return try {

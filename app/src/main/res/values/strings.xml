@@ -14,6 +14,10 @@
     <string name="retry">إعادة المحاولة</string>
     <string name="manage_interests">الاهتمامات</string>
     <string name="more_options">خيارات الخبر</string>
+    <string name="coverage_one">تغطية واحدة</string>
+    <string name="coverage_two">تغطيتان</string>
+    <string name="coverage_few">%d تغطيات</string>
+    <string name="coverage_many">%d تغطية</string>
     <string name="not_interested">غير مهتم</string>
     <string name="why_not_interested">لماذا لست مهتماً؟</string>
     <string name="why_hint">سنحفظ اختيارك، ويمكنك تغييره لاحقاً من الاهتمامات.</string>

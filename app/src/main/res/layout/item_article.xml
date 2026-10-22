@@ -75,4 +75,11 @@
         android:textColor="?attr/nabdMuted"
         android:textSize="15sp" />
 
+    <LinearLayout
+        android:id="@+id/related"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone" />
+
 </LinearLayout>
