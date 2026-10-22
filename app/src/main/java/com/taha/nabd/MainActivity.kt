@@ -34,6 +34,9 @@ class MainActivity : Activity() {
     private lateinit var progressView: ProgressBar
     private lateinit var retryView: Button
     private lateinit var swipeView: SwipeRefreshLayout
+    private lateinit var filtersView: LinearLayout
+    private var filterButtons: List<Pair<Button, String>> = emptyList()
+    private var loadedCountries: List<String> = emptyList()
     private var appliedTheme = InterestPrefs.THEME_PAPER
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -48,11 +51,7 @@ class MainActivity : Activity() {
         progressView = findViewById(R.id.progress)
         retryView = findViewById(R.id.retry)
         swipeView = findViewById(R.id.swipe)
-        val filters = listOf(
-            findViewById<Button>(R.id.filterAll) to "all",
-            findViewById<Button>(R.id.filterSaudi) to "sa",
-            findViewById<Button>(R.id.filterEgypt) to "eg",
-        )
+        filtersView = findViewById(R.id.filters)
 
         adapter.onMoreClick = { anchor, article -> showArticleMenu(anchor, article) }
         adapter.onOpenUrl = { openArticle(it) }
@@ -60,22 +59,22 @@ class MainActivity : Activity() {
         list.setOnItemClickListener { _, _, position, _ ->
             openArticle(adapter.getItem(position).url)
         }
-        filters.forEach { (button, id) ->
-            button.setOnClickListener {
-                region = id
-                styleFilters(filters)
-                show()
-            }
-        }
         findViewById<Button>(R.id.refresh).setOnClickListener { load() }
         findViewById<Button>(R.id.settings).setOnClickListener {
             startActivity(Intent(this, SettingsActivity::class.java))
+        }
+        findViewById<Button>(R.id.countries).setOnClickListener {
+            CountryPicker.show(this, prefs) {
+                if (region != "all" && region !in prefs.countries()) region = "all"
+                renderFilters()
+                load()
+            }
         }
         retryView.setOnClickListener { load() }
         swipeView.setColorSchemeColors(colorAttr(R.attr.nabdText))
         swipeView.setProgressBackgroundColorSchemeColor(colorAttr(R.attr.nabdFilterIdle))
         swipeView.setOnRefreshListener { load() }
-        styleFilters(filters)
+        renderFilters()
         load()
     }
 
@@ -83,6 +82,13 @@ class MainActivity : Activity() {
         super.onResume()
         if (prefs.themeId() != appliedTheme) {
             recreate()
+            return
+        }
+        val countries = prefs.countries()
+        if (region != "all" && region !in countries) region = "all"
+        renderFilters()
+        if (countries != loadedCountries) {
+            load()
             return
         }
         if (loaded) show()
@@ -172,6 +178,37 @@ class MainActivity : Activity() {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 
+    private fun renderFilters() {
+        filtersView.removeAllViews()
+        val entries = listOf("all" to getString(R.string.filter_all)) + prefs.countries().mapNotNull { id ->
+            NewsFeed.countries().find { it.id == id }?.let { it.id to it.label }
+        }
+        filterButtons = entries.mapIndexed { index, (id, label) ->
+            val button = Button(this).apply {
+                text = label
+                isAllCaps = false
+                minWidth = 0
+                minimumWidth = 0
+                setPadding(dp(16), dp(10), dp(16), dp(10))
+                setOnClickListener {
+                    region = id
+                    styleFilters(filterButtons)
+                    show()
+                }
+            }
+            val params = LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+            )
+            if (index < entries.lastIndex) params.marginEnd = dp(8)
+            filtersView.addView(button, params)
+            button to id
+        }
+        styleFilters(filterButtons)
+    }
+
+    private fun dp(value: Int): Int = (value * resources.displayMetrics.density).toInt()
+
     private fun styleFilters(filters: List<Pair<Button, String>>) {
         filters.forEach { (button, id) ->
             val selected = id == region
@@ -187,10 +224,12 @@ class MainActivity : Activity() {
 
     private fun show() {
         val cutoff = System.currentTimeMillis() - DAY_MILLIS
+        val selected = prefs.countries().toSet()
         val visible = NewsFeed.combined(
             articles
                 .filter { it.publishedAt >= cutoff }
                 .filter { prefs.allows(it) }
+                .filter { it.region in selected }
                 .filter { region == "all" || it.region == region },
         )
         adapter.readingText = prefs.readingText()
@@ -225,6 +264,8 @@ class MainActivity : Activity() {
     }
 
     private fun load() {
+        val countries = prefs.countries()
+        loadedCountries = countries
         val generation = ++loadGeneration
         if (loaded) {
             swipeView.isRefreshing = true
@@ -234,7 +275,7 @@ class MainActivity : Activity() {
             retryView.visibility = View.GONE
         }
         Thread {
-            val result = runCatching { NewsFeed.load() }
+            val result = runCatching { NewsFeed.load(countries) }
             runOnUiThread {
                 if (generation != loadGeneration || isDestroyed) return@runOnUiThread
                 progressView.visibility = View.GONE

@@ -4,8 +4,13 @@
     <string name="subtitle">أخبار Google: السعودية ومصر</string>
     <string name="refresh">تحديث</string>
     <string name="filter_all">الكل</string>
-    <string name="filter_saudi">السعودية</string>
-    <string name="filter_egypt">مصر</string>
+    <string name="choose_countries">دول</string>
+    <string name="section_countries">الدول</string>
+    <string name="countries_hint">تُجلب أخبار الدول المختارة. ست دول كحد أقصى.</string>
+    <string name="countries_dialog_title">اختر حتى ست دول</string>
+    <string name="countries_need_one">اختر دولة واحدة على الأقل</string>
+    <string name="countries_too_many">يمكن اختيار ست دول كحد أقصى</string>
+    <string name="done">تم</string>
     <string name="loading">جاري جلب الأخبار...</string>
     <string name="article_count">%1$d خبر خلال آخر ٢٤ ساعة</string>
     <string name="article_count_stale">%1$d خبر خلال آخر ٢٤ ساعة · تعذر التحديث</string>

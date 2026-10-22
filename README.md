@@ -1,45 +1,50 @@
 # الخلاصة
 
-Native Android app that lists Arabic headlines from two Google News RSS feeds. Created from `android-app-starter-kit`. There is no backend: the app fetches the feeds itself.
+قارئ أخبار عربي بهاتفك. يجلب العناوين بنفسه من خلاصات Google News، بلا خادم وسيط.
 
-## Feeds
+An Arabic news reader for Android. It downloads Google News RSS on the phone. There is no backend.
 
-- السعودية: `https://news.google.com/rss?hl=ar&gl=SA&ceid=SA:ar`
-- مصر: `https://news.google.com/rss?hl=ar&gl=EG&ceid=EG:ar`
+![الخلاصة](docs/screenshot.png)
 
-**الكل** shows both, newest first. **السعودية** and **مصر** filter that list. **تحديث** downloads again, and the list can be pulled to refresh. Tapping a headline opens an in-app tab. **الاهتمامات** can switch that to the external browser. If one edition fails, the other stays on screen and the status line says which one could not be fetched.
+الشريط يعرض الدول التي تختارها، وحتى ست دول معاً. **دول** تفتح قائمة اختيار متعددة، وأول بند فيها **العالم أجمع**. **الكل** يجمع المختار. السحب للأسفل يحدّث القائمة، والضغط على العنوان يفتح الخبر داخل التطبيق. من **الاهتمامات** يمكن تبديل المظهر وحجم الخط وفتح الخبر في المتصفح، وإخفاء تصنيف أو مصدر أو خبر.
 
-Do not add a local server or a CORS proxy. Those were only needed for the browser page, because Google News does not let a web page read these feeds. An Android HTTP client can read them directly.
+## التثبيت على أندرويد
 
-## Code
+يحتاج الجهاز إلى أندرويد ١٠ أو أحدث.
 
-- `app/src/main/java/com/taha/nabd/NewsFeed.kt` fetches both feeds in parallel and parses each `<item>` (title, link, source, pubDate). The publisher suffix after the last ` - ` is removed from the title.
-- `app/src/main/java/com/taha/nabd/NewsAdapter.kt` renders one row: region, relative time, title, source.
-- `app/src/main/java/com/taha/nabd/MainActivity.kt` owns the filters, refresh, and the list.
-- Layouts are XML. The UI is RTL Arabic. Do not switch this app to Compose unless asked.
+1. من صفحة [الإصدارات](https://github.com/a0ali0taha/alkholasa/releases) نزّل الملف `alkholasa.apk`.
+2. افتح الملف. إذا منع النظام التثبيت، اسمح للمتصفح أو لتطبيق الملفات بتثبيت التطبيقات غير المعروفة.
+3. ثبّت التطبيق وافتح **الخلاصة**.
 
-Package / namespace: `com.taha.nabd`. Debug builds install as `com.taha.nabd.debug` because of `applicationIdSuffix`. Launch the debug activity with:
+هذا ملف تجربة موقّع بمفتاح التطوير، واسم الحزمة فيه `com.taha.nabd.debug`. يمكن حذفه من إعدادات التطبيقات في أي وقت.
 
-```bash
-adb shell am start -n com.taha.nabd.debug/com.taha.nabd.MainActivity
-```
+## التطوير
 
-## Run on the emulator
+يلزم Android Studio مع JDK ١٧ وحزمة Android SDK. عند فتح المشروع تنشئ الاستوديو ملف `local.properties` ومسار الـ SDK فيه. هذا الملف لا يُرفع إلى Git.
 
-From this directory. `adb` and `emulator` live in `~/Library/Android/sdk` and are not always on `PATH`.
+من مجلد المشروع:
 
 ```bash
-export PATH="$HOME/Library/Android/sdk/emulator:$HOME/Library/Android/sdk/platform-tools:$PATH"
+export PATH="$HOME/Library/Android/sdk/platform-tools:$PATH"
 ./gradlew assembleDebug
 adb install -r app/build/outputs/apk/debug/app-debug.apk
 adb shell am start -n com.taha.nabd.debug/com.taha.nabd.MainActivity
 ```
 
-The emulator used so far is `Medium_Phone_API_36`. Start it only if none is connected:
+التطبيق الأصلي `com.taha.nabd`، ونسخة التطوير تُثبَّت باسم `com.taha.nabd.debug`. الواجهة XML من اليمين إلى اليسار. لا تحوّلها إلى Compose إلا إذا طُلب ذلك. لا تضف خادماً محلياً ولا وسيط CORS: تطبيق أندرويد يقرأ الخلاصات مباشرة، والمتصفح هو الذي كان يحتاج وسيطاً.
 
-```bash
-emulator -avd Medium_Phone_API_36 -no-audio -no-boot-anim
-adb wait-for-device
-```
+- `NewsFeed.kt` يجلب خلاصة كل دولة، ويدمج العناوين المتطابقة.
+- `CountryPicker.kt` قائمة الدول، بحد أقصى ست دول، ومنها العالم أجمع.
+- `MainActivity.kt` الفلاتر والتحديث والقائمة.
+- `NewsAdapter.kt` صف الخبر والتغطيات المرتبطة.
+- `SettingsActivity.kt` المظهر والخط وطريقة فتح الخبر والاهتمامات.
 
-JDK is Android Studio’s JBR (`JAVA_HOME` already points at it). `local.properties` has the SDK path and is gitignored.
+## المساهمة
+
+1. انسخ المستودع إلى حسابك (Fork).
+2. أنشئ فرعاً للتغيير: `git checkout -b fix-headline-spacing`.
+3. اجعل التغيير صغيراً وموضّحاً في الوصف: لماذا، لا قائمة ملفات فقط.
+4. حافظ على العربية واتجاه اليمين إلى اليسار، وعلى ألوان الورق والليل الحالية.
+5. افتح Pull Request إلى `master`.
+
+اكتب بالعربية أو بالإنجليزية. صف السلوك الذي تغيّر وكيف جرّبته على جهاز أو محاكي.

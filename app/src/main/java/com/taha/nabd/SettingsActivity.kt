@@ -28,6 +28,16 @@ class SettingsActivity : Activity() {
         container.removeAllViews()
         sectionCount = 0
 
+        addHeader(R.string.section_countries)
+        addEmpty(R.string.countries_hint)
+        addRow(
+            label = countrySummary(),
+            action = getString(R.string.browser_choose),
+            highlight = false,
+        ) {
+            CountryPicker.show(this, prefs) { render() }
+        }
+
         addHeader(R.string.section_reading)
         addChoice(R.string.theme_paper, prefs.themeId() == InterestPrefs.THEME_PAPER) {
             chooseTheme(InterestPrefs.THEME_PAPER)
@@ -107,6 +117,10 @@ class SettingsActivity : Activity() {
 
         scroll.post { scroll.scrollTo(0, y) }
     }
+
+    private fun countrySummary(): String =
+        prefs.countries().mapNotNull { id -> NewsFeed.countries().find { it.id == id }?.label }
+            .joinToString(" · ")
 
     private fun addChoice(labelRes: Int, selected: Boolean, onPick: () -> Unit) {
         addRow(

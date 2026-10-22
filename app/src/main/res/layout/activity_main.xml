@@ -55,41 +55,33 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
+        android:gravity="center_vertical"
         android:orientation="horizontal">
 
-        <Button
-            android:id="@+id/filterAll"
-            android:layout_width="wrap_content"
+        <HorizontalScrollView
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:background="?attr/nabdFilterSelected"
-            android:backgroundTint="@null"
-            android:minWidth="0dp"
-            android:paddingHorizontal="16dp"
-            android:text="@string/filter_all"
-            android:textColor="?attr/nabdFilterSelectedText" />
+            android:layout_weight="1"
+            android:scrollbars="none">
+
+            <LinearLayout
+                android:id="@+id/filters"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal" />
+        </HorizontalScrollView>
 
         <Button
-            android:id="@+id/filterSaudi"
+            android:id="@+id/countries"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
             android:background="?attr/nabdFilterIdle"
             android:backgroundTint="@null"
             android:minWidth="0dp"
             android:paddingHorizontal="16dp"
-            android:text="@string/filter_saudi"
-            android:textColor="?attr/nabdText" />
-
-        <Button
-            android:id="@+id/filterEgypt"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="?attr/nabdFilterIdle"
-            android:backgroundTint="@null"
-            android:minWidth="0dp"
-            android:paddingHorizontal="16dp"
-            android:text="@string/filter_egypt"
+            android:text="@string/choose_countries"
+            android:textAllCaps="false"
             android:textColor="?attr/nabdText" />
     </LinearLayout>
 

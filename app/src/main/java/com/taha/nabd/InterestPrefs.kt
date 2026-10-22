@@ -24,6 +24,38 @@ class InterestPrefs(context: Context) {
 
     fun readingText(): ReadingText = ReadingText.fromId(textSizeId())
 
+    fun countries(): List<String> {
+        val known = NewsFeed.countries()
+        val saved = prefs.getStringSet(KEY_COUNTRIES, null)
+        val picked = saved?.filter { id -> known.any { it.id == id } }?.toSet()
+        val ids = if (saved == null || picked.isNullOrEmpty()) setOf("sa", "eg") else picked
+        return known.map { it.id }.filter { it in ids }
+    }
+
+    fun setCountries(ids: Collection<String>): Boolean {
+        val next = NewsFeed.countries().map { it.id }.filter { it in ids }
+        if (next.isEmpty() || next.size > MAX_COUNTRIES) return false
+        if (next == countries()) return false
+        prefs.edit().putStringSet(KEY_COUNTRIES, next.toSet()).apply()
+        return true
+    }
+
+    fun updateCountry(id: String, enabled: Boolean): CountryUpdate {
+        if (NewsFeed.countries().none { it.id == id }) return CountryUpdate.SAVED
+        val current = countries().toMutableList()
+        if (enabled) {
+            if (id in current) return CountryUpdate.SAVED
+            if (current.size >= MAX_COUNTRIES) return CountryUpdate.TOO_MANY
+            current += id
+        } else {
+            if (id !in current) return CountryUpdate.SAVED
+            if (current.size <= 1) return CountryUpdate.NEED_ONE
+            current -= id
+        }
+        prefs.edit().putStringSet(KEY_COUNTRIES, current.toSet()).apply()
+        return CountryUpdate.SAVED
+    }
+
     fun useInAppBrowser(): Boolean = prefs.getBoolean(KEY_IN_APP, true)
 
     fun setInAppBrowser(enabled: Boolean) {
@@ -107,11 +139,15 @@ class InterestPrefs(context: Context) {
         return HiddenStory(raw.substring(0, sep), raw.substring(sep + 1))
     }
 
+    enum class CountryUpdate { SAVED, NEED_ONE, TOO_MANY }
+
     companion object {
         const val THEME_PAPER = "paper"
         const val THEME_CHARCOAL = "charcoal"
+        const val MAX_COUNTRIES = 6
 
         private const val FILE = "interests"
+        private const val KEY_COUNTRIES = "countries"
         private const val KEY_THEME = "reading_theme"
         private const val KEY_TEXT = "reading_text"
         private const val KEY_IN_APP = "in_app_browser"
