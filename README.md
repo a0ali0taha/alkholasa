@@ -5,8 +5,12 @@
 An Arabic news reader for Android. It downloads Google News RSS on the phone. There is no backend.
 
 <p align="center">
-  <img src="docs/home.png" width="250" alt="الرئيسية: السعودية ومصر" />
-  <img src="docs/settings.png" width="250" alt="الاهتمامات" />
+  <img src="docs/home.jpg" width="250" alt="الرئيسية: السعودية ومصر" />
+  <img src="docs/egypt.jpg" width="250" alt="مصر" />
+</p>
+<p align="center">
+  <img src="docs/countries.jpg" width="250" alt="اختيار الدول" />
+  <img src="docs/settings.jpg" width="250" alt="الاهتمامات" />
 </p>
 
 الشريط يعرض الدول التي تختارها، وحتى ست دول معاً. **دول** تفتح قائمة اختيار متعددة، وأول بند فيها **العالم أجمع**. **الكل** يجمع المختار. السحب للأسفل يحدّث القائمة، والضغط على العنوان يفتح الخبر داخل التطبيق. من **الاهتمامات** يمكن تبديل المظهر وحجم الخط وفتح الخبر في المتصفح، وإخفاء تصنيف أو مصدر أو خبر.
